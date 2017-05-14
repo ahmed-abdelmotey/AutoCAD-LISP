@@ -1,0 +1,12 @@
+(defun c:ref ()
+	(setq btyp (strcat (substr (car (layoutlist)) 9 5) (substr (car (layoutlist)) 15 1)))
+	(setq ss (ssget "x" (list (cons 0 "INSERT") (cons 410 "model"))))
+	(setq idx 0 blks '())
+	(while (< idx (sslength ss))
+		(setq blks (cons (ssname ss idx) blks)
+			  idx (1+ idx)
+		)
+	)
+	(foreach blk blks (if (/= btyp (substr (cdr (assoc 2 (entget blk))) 20 6)) (entdel blk)))
+)
+

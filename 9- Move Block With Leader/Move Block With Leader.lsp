@@ -1,0 +1,23 @@
+(princ "Author: Ahmed Abd-elmotey - MAR 2016 - ahmed.abdelmotey92@gmail.com - To Run Type : MBWL")
+(defun c:MBWL()
+	(vl-load-com)
+	(progn
+		(setq 
+			modelSpace (vla-get-ModelSpace (vla-get-ActiveDocument (vlax-get-acad-object)))
+			obj (vlax-ename->vla-object (car (entsel)))
+			p1 (vlax-variant-value (vla-get-InsertionPoint obj))
+			p2 (vlax-variant-value (vla-GetPoint (vla-get-Utility (vla-get-ActiveDocument (vlax-get-acad-object)))))
+			points (vlax-make-safearray vlax-vbDouble '(0 . 5))
+		)
+		(setq LP (append (vlax-safearray->list p1)(vlax-safearray->list p2)))
+		(vla-move obj p1 p2)
+		(vlax-safearray-fill points LP)
+		(setq 
+			annotationObject (vla-AddMText modelSpace (vlax-3d-point (vlax-safearray->list p2)) 1 "")
+			leaderObj (vla-AddLeader modelSpace points annotationObject acLineWithArrow)
+		)
+		(vla-Erase annotationObject)
+		(vla-put-Coordinate leaderObj 1 (vlax-3D-point (vlax-safearray->list p2)))
+		(vla-AddPoint modelSpace (vlax-3d-point (vlax-safearray->list p1)))
+	)
+)
